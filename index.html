@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customized Google Maps Example</title>
+    <style>
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+        /* Added styles for the heading */
+        h1 {
+            background-color: #f0f0f0; /* Light gray background color */
+            padding: 20px; /* Add padding around the heading */
+            border-radius: 10px; /* Add rounded corners to the heading */
+            text-align: center; /* Center align the text */
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <!-- Modified heading -->
+        <h1>Nearest Police Stations and Hospitals</h1>
+    </center>
+    
+    <div id="map"></div>
+
+    <!-- Include optimized Google Maps JavaScript API loading -->
+    
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAr7X2_Zf0aR8UAthoYqR_37noQJ-0I1LY&libraries=places&callback=initMap"
+    async defer></script>
+    <!-- Replace YOUR_API_KEY with your actual Google Maps API key -->
+    <!-- defer attribute ensures the script is executed after the DOM has finished loading -->
+    
+    <!-- Include Jasmine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/3.6.0/jasmine.js"></script>
+    <!-- Include your Jasmine spec file -->
+    <script src="spec.js" defer></script>
+    <!-- Include your script file -->
+    <script src="script.js" defer></script>
+</body>
+</html>
