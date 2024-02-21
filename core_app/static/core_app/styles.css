@@ -1,0 +1,48 @@
+/* Center the table and set column sizes based on th text size */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px auto; /* Center the table horizontally and provide some space around it */
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+    background-color: #f5f5f5;
+}
+
+tr:hover {
+    background-color: #e0e0e0;
+}
+
+/* Center the Refresh button */
+.float-right {
+    float: right;
+}
+
+/* Center the buttons in the "Modify" column */
+.center-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Adjust column sizes based on th text size */
+th {
+    white-space: nowrap; /* Prevent text wrapping in th */
+}
+
+/* Responsive styling for smaller screens */
+@media (max-width: 768px) {
+    th, td {
+        font-size: 14px; /* Adjust font size for smaller screens */
+    }
+}

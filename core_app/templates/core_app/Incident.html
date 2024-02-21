@@ -1,0 +1,138 @@
+<!-- incident_list.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident List</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'core_app/styles.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="container-fluid mt-3">
+
+    <!-- Refresh Button -->
+    <div class="float-right mb-3">
+        <button type="button" class="btn btn-primary" onclick="refreshData()" style="background-color: #3498db; color: #ffffff; border: 2px solid #3498db;">
+            <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+    </div>
+
+<!--    <h1 class="mb-4">Incident List</h1>-->
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Location</th>
+                <th>Description</th>
+                <th>Images</th>
+                <th>Incident Type</th>
+                <th>Timestamp</th>
+                <th>Status</th>
+                <th>Traffic</th>
+                <th>Impact</th>
+                <th>Modify</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for incident in incidents %}
+                <tr>
+                    <td class="align-middle">{{ incident.id }}</td>
+                    <td class="align-middle">{{ incident.location }}</td>
+                    <td class="align-middle">{{ incident.description }}</td>
+                    <td class="align-middle">
+<!--                    {% for image in incident.image %}-->
+<!--                        <img src="{{ incident.image.url }}" alt="{{ incident.description }}">-->
+<!--                        <p>{{ image.url }}</p>-->
+<!--                    {% endfor %}-->
+                        <img src="{{ incident.images.url }}" alt="{{ incident.description }}" style="width: 100px; height: 100px;">
+                    </td>
+                    <td class="align-middle">{{ incident.incident_type }}</td>
+                    <td class="align-middle">{{ incident.occur_time }}</td>
+                    <td class="align-middle">
+                        <span id="status{{ incident.id }}">{{ incident.status }}</span>
+                        <input type="text" id="statusInput{{ incident.id }}" style="display: none;">
+                    </td>
+                    <td class="align-middle">{{ incident.traffic_status }}</td>
+                    <td class="align-middle">{{ incident.scale_impact }}</td>
+                    <td class="align-middle center-buttons">
+                        <button class="btn btn-sm btn-primary" onclick="editStatus('{{ incident.id }}')">Update</button>
+                        <button class="btn btn-sm btn-success" onclick="confirmStatus('{{ incident.id }}')">Confirm</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+<script>
+    function refreshData() {
+        $.ajax({
+            url: "{% url 'core_app:getIncident' %}",
+            method: "GET",
+            success: function(response) {
+                location.reload();
+            },
+            error: function(error) {
+                console.log("Error refreshing data:", error);
+            }
+        });
+    }
+
+    function confirmStatus(id) {
+        const newStatus = document.getElementById("statusInput" + id).value;
+
+        const csrftoken = getCookie('csrftoken');
+
+        $.ajax({
+            url: `/core_app/edit_status/${id}/`,
+            type: "POST",
+            data: { 'status': newStatus },
+            headers: { 'X-CSRFToken': csrftoken },
+            success: function(response) {
+                if (response.success) {
+                    document.getElementById("status" + id).innerText = newStatus;
+                    document.getElementById("status" + id).style.display = "block";
+                    document.getElementById("statusInput" + id).style.display = "none";
+                } else {
+                    console.log("Error:", response.errors);
+                }
+            },
+            error: function(error) {
+                console.log("Error:", error);
+            }
+        });
+    }
+
+    function editStatus(id) {
+        document.getElementById("status" + id).style.display = "none";
+        document.getElementById("statusInput" + id).style.display = "block";
+        document.getElementById("statusInput" + id).value = document.getElementById("status" + id).innerText;
+        document.getElementById("statusInput" + id).focus();
+    }
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+
+</html>

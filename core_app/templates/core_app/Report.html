@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        form {
+            width: calc(100% - 40px);
+            max-width: 600px;
+            margin: 20px auto;
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        form select, form input, form textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        form select, form input, form textarea, form button {
+            box-sizing: border-box;
+        }
+
+        form button {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        form button:hover {
+            background: #369943;
+        }
+
+        .error-message {
+            color: #d9534f;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+ input[type="file"] {
+    display: none;
+  }
+
+  /* 自定义样式的上传按钮 */
+  .custom-file-upload {
+    display: inline-block;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #3498db;
+    border: 1px solid #3498db;
+    border-radius: 5px;
+  }
+
+  /* 鼠标悬停时的样式 */
+  .custom-file-upload:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+  }
+    </style>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+</head>
+<body>
+<div id="report" class="content">
+    <form id="reportForm" onsubmit="return validateForm()" action="{% url 'core_app:report_incident' %}" method="post">
+        <label for="category">Category:</label>
+        <select id="category" name="category" required>
+            <option value="" disabled selected>Select</option>
+            <option value="Fire">Fire</option>
+            <option value="Flood">Flood</option>
+            <option value="Accident">Accident</option>
+            <option value="Earthquake">Earthquake</option>
+            <option value="Wildfire">Wildfire</option>
+            <option value="Cyclones">Cyclones</option>
+            <option value="Industrial Accident">Industrial Accident</option>
+            <option value="Transportation Accident">Transportation Accident</option>
+            <option value="Structural Failure">Structural Failure</option>
+            <option value="Nuclear Incident">Nuclear Incident</option>
+            <option value="Biological Incident">Biological Incident</option>
+            <option value="Chemical Incident">Chemical Incident</option>
+            <option value="Toxic Waste Incident">Toxic Waste Incident</option>
+            <option value="Electric Incidents">Electric Incidents</option>
+        </select>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" placeholder="Enter location" readonly required>
+
+        <label for="images" class="custom-file-upload">Images of incident:</label>
+        <input type="file" id="images" name="images" accept="image/*" multiple required>
+
+        <label for="impactScale">Impact Scale:</label>
+        <select id="impactScale" name="impactScale" required>
+            <option value="" disabled selected>Select</option>
+            <option value="Mild">Mild</option>
+            <option value="Severe">Severe</option>
+        </select>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" placeholder="Enter description" required></textarea>
+
+        <button type="submit"class="btn btn-primary" style="background-color: #3498db; color: #ffffff; border: 2px solid #3498db;">
+            <i class="fas fa-sync-alt"></i>Submit</button>
+        <div class="error-message" id="errorMessage"></div>
+    </form>
+</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script>
+    var map
+
+    $(document).ready(function(){
+        $(".header a").click(function(){
+            var target = $(this).data("target");
+            $(".content").hide();
+            $(target).show();
+        });
+    });
+
+    function validateForm() {
+        var form = document.getElementById("reportForm");
+        var errorMessage = document.getElementById("errorMessage");
+
+        if (form.checkValidity()) {
+            errorMessage.innerHTML = "";
+            return true;
+        } else {
+            errorMessage.innerHTML = "Please fill in all required fields.";
+            return false;
+        }
+    }
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                showPosition(position);
+                initMap(position);
+            }, function(error) {
+                document.getElementById('location').value = "Can not get your location";
+            });
+        } else {
+            document.getElementById('location').value = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    function showPosition(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        reverseGeocode(lat, lng);
+    }
+
+    function reverseGeocode(lat, lng) {
+        var geocoder = new google.maps.Geocoder();
+        var latlng = {lat: parseFloat(lat), lng: parseFloat(lng)};
+
+        geocoder.geocode({'location': latlng}, function(results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+                    document.getElementById('location').value = results[0].formatted_address;
+                } else {
+                    document.getElementById('location').value = 'No address found';
+                }
+            } else {
+                document.getElementById('location').value = 'Geocoder failed due to: ' + status;
+            }
+        });
+    }
+
+    function initMap() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+
+                var noPoi = [
+                    {
+                        featureType: "poi",
+                        stylers: [{ visibility: "off" }]  // 隐藏点兴趣
+                    },
+                    {
+                        featureType: "transit",
+                        elementType: "labels.icon",
+                        stylers: [{ visibility: "off" }]  // 选择性隐藏公共交通标记，如果需要
+                    }
+                ];
+
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: pos,
+                    zoom: 16,
+                    styles:noPoi
+                });
+
+                var userMarker = new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    title: "Your Location"
+                });
+
+                var disasters = [
+                    { lat: pos.lat + 0.001, lng: pos.lng + 0.001, title: 'Fire' },
+                    { lat: pos.lat - 0.001, lng: pos.lng - 0.001, title: 'Fire' },
+                    { lat: pos.lat + 0.002, lng: pos.lng - 0.002, title: 'Fire' },
+                ];
+
+                disasters.forEach(function(disaster) {
+                    var marker = new google.maps.Marker({
+                        position: {lat: disaster.lat, lng: disaster.lng},
+                        map: map,
+                        title: disaster.title,
+                        icon: {
+                           url: "/core_app/static/core_app/fire.svg",
+                           scaledSize: new google.maps.Size(30, 30)
+                        }
+                    });
+                });
+            }, function() {
+                handleLocationError(true, map.getCenter());
+            });
+        } else {
+            // Browser doesn't support Geolocation
+            handleLocationError(false);
+        }
+    }
+
+    function handleLocationError(browserHasGeolocation, pos) {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: pos,
+            zoom: 14
+        });
+        var infoWindow = new google.maps.InfoWindow({map: map});
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                            'Error: The Geolocation service failed.' :
+                            'Error: Your browser doesn\'t support geolocation.');
+    }
+
+    window.onload = function() {
+        getLocation();
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var successMessage = "{{ success_message }}";  // 这里替换为你的模板变量
+        if (successMessage) {
+            Toastify({
+                text: successMessage,
+                duration: 3000,  // 持续显示时间（毫秒）
+                close: true,
+                gravity: 'bottom',  // 可选的通知位置：'top', 'bottom', 'left', 'right'
+                position: 'right',  // 在'left'或'right'位置显示时使用
+                stopOnFocus: true,
+            }).showToast();
+        }
+    });
+
+</script>
+
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqWMFEzFkRbi6w5hGgLVN3wEAwZsTURlM&callback=initMap">
+</script>
+
+</html>

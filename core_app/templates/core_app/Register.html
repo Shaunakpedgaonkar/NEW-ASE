@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            max-width: 300px;
+            width: 90%;
+            padding: 16px;
+            background-color: white;
+            border: 1px solid black;
+            border-radius: 4px;
+        }
+
+        input[type=text], input[type=password] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 600px) {
+            input[type=text], input[type=password], button {
+                padding: 15px;
+                font-size: 16px;
+            }
+        }
+    </style>
+    <script>
+        function validateForm() {
+            var psw = document.forms["myForm"]["psw"].value;
+            var psw_repeat = document.forms["myForm"]["psw-repeat"].value;
+            var uname = document.forms["myForm"]["uname"].value;
+
+            if (psw != psw_repeat) {
+                alert("Passwords do not match. Please re-enter your passwords.");
+                return false;
+            }
+
+            if (psw.length < 8) {
+                alert("Password should be at least 8 characters.");
+                return false;
+            }
+
+            var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!regex.test(uname)) {
+                alert("Please enter a valid email address.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <form name="myForm" action="/submit_register" onsubmit="return validateForm()" method="post">
+        <label for="uname"><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" name="uname" required>
+
+        <label for="psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="psw" required>
+
+        <label for="psw-repeat"><b>Repeat Password</b></label>
+        <input type="password" placeholder="Repeat Password" name="psw-repeat" required>
+
+        <button type="submit">Register</button>
+    </form>
+</div>
+
+</body>
+</html>
