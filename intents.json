@@ -1,0 +1,95 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Hello", "Hi there", "Good morning", "Good evening", "Hey"],
+      "responses": [
+        "Hello, how can I assist you today?",
+        "Hi there, what can I do for you?",
+        "Good day! How can I help you today?"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["Bye", "Goodbye", "See you later", "Farewell", "I'm off"],
+      "responses": [
+        "Goodbye! Stay safe!",
+        "Farewell, contact us anytime you need help.",
+        "Bye! Don’t hesitate to return if you need more information."
+      ]
+    },
+    {
+      "tag": "safety_precautions",
+      "patterns": [
+        "What should I do during an earthquake?",
+        "How to prepare for a hurricane?",
+        "Safety tips for a flood?",
+        "Precautions during a tornado?",
+        "What to do if I smell gas?"
+      ],
+      "responses": [
+        "For an earthquake: Stay indoors, under a table. Avoid windows.",
+        "For a hurricane: Secure loose objects, evacuate if advised.",
+        "For a flood: Seek higher ground, avoid walking through floodwaters.",
+        "For a tornado: Go to a basement or an interior room without windows.",
+        "If you smell gas: Do not turn on any electrical appliances. Exit the building and call the gas company."
+      ]
+    },
+    {
+      "tag": "local_medical_facilities",
+      "patterns": [
+        "Where is the nearest hospital?",
+        "Find nearby clinics",
+        "I need emergency services",
+        "Directions to the closest medical center",
+        "How do I get to the nearest clinic?"
+      ],
+      "responses": [
+        "For information about local medical facilities, please refer to our Resources page."
+      ]
+    },
+    {
+      "tag": "emergency_contacts",
+      "patterns": [
+        "Who do I call in a disaster?",
+        "Emergency contact numbers",
+        "List of local emergency services",
+        "How do I contact the fire department?",
+        "Phone number for the police department"
+      ],
+      "responses": [
+        "In case of a disaster, call 112 or 999.",
+        "Here are some important contact numbers:\n- Ambulance: 112 or 999\n- Garda (Police): 112 or 999\n- Fire Brigade: 112 or 999\n- Coast Guard: 112 or 999\n- Poison Control: 01 809 2166",
+        "You can reach local emergency services at 112 or 999.",
+        "The fire department can be contacted at 112 or 999.",
+        "For the police department, dial 112 or 999."
+      ]
+    },
+    {
+      "tag": "evacuation_routes",
+      "patterns": [
+        "What are the evacuation routes?",
+        "How do I evacuate from here?",
+        "Nearest evacuation points?",
+        "Show me a map of evacuation routes",
+        "Evacuation plan for my area"
+      ],
+      "responses": [
+        "To access evacuation routes and nearby resources, please visit our Resources page.",
+        "Our Resources page provides access to evacuation routes, nearby resources, and alternative routes to specific destinations."
+      ]
+    },
+    {
+      "tag": "active_disasters",
+      "patterns": [
+        "What are the active disasters?",
+        "Show me current disasters",
+        "List of ongoing emergencies",
+        "Any reported incidents?"
+      ],
+      "responses": [
+        "To view active disasters, please visit our Home page where you can find a map with markers indicating reported incidents and a table displaying active and inactive disasters."
+      ]
+    }
+  ]
+}
