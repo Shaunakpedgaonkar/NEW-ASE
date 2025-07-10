@@ -1,0 +1,188 @@
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <style>
+                form {
+                    width: calc(100% - 40px);
+                    max-width: 600px;
+                    margin: 20px auto;
+                    background: #f4f4f4;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+
+                header {
+                    background-color: goldenrod;
+                    color: white;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 20px;
+                }
+
+                header a {
+                    color: white;
+                    text-decoration: none;
+                    margin: 0 10px;
+                    font-size: 18px;
+                }
+
+                form label {
+                    display: block;
+                    margin-bottom: 10px;
+                    font-size: 18px;
+                    color: #333;
+                }
+
+                form select, form input, form textarea {
+                    width: 100%;
+                    padding: 15px;
+                    margin-bottom: 20px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    font-size: 16px;
+                }
+
+                form select, form input, form textarea, form button {
+                    box-sizing: border-box;
+                }
+
+                form button {
+                    background: #4CAF50;
+                    color: white;
+                    padding: 15px 20px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 18px;
+                    margin-top: 10px;
+                }
+
+                form button:hover {
+                    background: #369943;
+                }
+
+                .error-message {
+                    color: #d9534f;
+                    margin-top: 5px;
+                    font-size: 14px;
+                }
+                input[type="file"] {
+                    display: none;
+                }
+
+                .custom-file-upload {
+                    display: inline-block;
+                    padding: 10px 15px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: #fff;
+                    background-color: #3498db;
+                    border: 1px solid #3498db;
+                    border-radius: 5px;
+                }
+
+                .custom-file-upload:hover {
+                    background-color: #2980b9;
+                    border-color: #2980b9;
+                }
+            </style>
+            <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+        </head>
+        <body>
+    <header>
+        <div>
+            <a href="{% url 'staff:home' %}">Home</a>
+            <a href="{% url 'staff:getIncident' %}">Incidents</a>
+            <a href="{% url 'staff:report' %}">Report</a>
+            <a href="{% url 'staff:staff_logout' %}">LogOut</a>
+        </div>
+        <div>
+            {% load static %}
+            <img src="{% static 'icons/logo.png' %}" alt="Logo" height="50">
+        </div>
+        </header>
+        <div id="report" class="content">
+            <form id="reportForm" onsubmit="return validateForm()" action="{% url 'staff:report_incident' %}?lat={{ latitude }}&lng={{ longitude }}" method="post">
+                {% csrf_token %}
+                <label for="category">Category:</label>
+                <select id="category" name="category" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="Flood">Flood</option>
+                    <option value="Storm">Storm</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Landslide">Landslide</option>
+                    <option value="Industrial Accident">Industrial Accident</option>
+                    <option value="Transportation Accident">Transportation Accident</option>
+                    <option value="Electrical Incident">Electrical Incident</option>
+                </select>
+
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" placeholder="Enter location" required>
+                <input type="hidden" id="latitude" name="latitude" value="">
+                <input type="hidden" id="longitude" name="longitude" value="">
+
+                <label for="images" class="custom-file-upload">Images of incident:</label>
+                <input type="file" id="images" name="images" accept="image/*" multiple required>
+
+                <label for="impactScale">Scale:</label>
+                <select id="impactScale" name="impactScale" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="Mild">Mild</option>
+                    <option value="Severe">Severe</option>
+                </select>
+
+                <label for="trafficStatus">Traffic:</label>
+                <select id="trafficStatus" name="trafficStatus" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="No Impact">No Impact</option>
+                    <option value="Light Congestion">Light Congestion</option>
+                    <option value="Heavy Congestion">Heavy Congestion</option>
+                </select>
+
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" placeholder="Enter description" required></textarea>
+
+                <button type="submit"class="btn btn-primary" style="background-color: #3498db; color: #ffffff; border: 2px solid #3498db;">
+                    <i class="fas fa-sync-alt"></i>Submit</button>
+                <div class="error-message" id="errorMessage"></div>
+            </form>
+        </div>
+        </body>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqWMFEzFkRbi6w5hGgLVN3wEAwZsTURlM&libraries=places&callback=initAutocomplete" async defer></script>
+    
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+        <script>
+            function initAutocomplete() {
+                var input = document.getElementById('location');
+                var autocomplete = new google.maps.places.Autocomplete(input);
+                autocomplete.addListener('place_changed', function() {
+                    var place = autocomplete.getPlace();
+                    if (!place.geometry) {
+                        window.alert("No details available for input: '" + place.name + "'");
+                        return;
+                    }
+                    document.getElementById('latitude').value = place.geometry.location.lat();
+                    document.getElementById('longitude').value = place.geometry.location.lng();
+                });
+            }
+    
+            function validateForm() {
+                var form = document.getElementById("reportForm");
+                var errorMessage = document.getElementById("errorMessage");
+    
+                if (form.checkValidity()) {
+                    errorMessage.innerHTML = "";
+                    return true;
+                } else {
+                    errorMessage.innerHTML = "Please fill in all required fields.";
+                    return false;
+                }
+            }
+        </script>
+
+</html>

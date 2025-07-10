@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home Page</title>
+  <style>
+    /* Add some modern styling */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #3f51b5;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+    }
+    header a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 18px;
+    }
+    #map-container {
+      height: 400px;
+      width: 100%;
+    }
+    #most-recent-incident {
+      background-color: #f8f9fa;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    footer {
+      background-color: #3f51b5;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+    table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background-color: #4CAF50;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #ddd;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+}
+
+table {
+  table-layout: fixed;
+}
+
+td, th {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+p {
+  font-size: 16px;
+  color: #666;
+  text-align: center;
+}
+
+  </style>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqWMFEzFkRbi6w5hGgLVN3wEAwZsTURlM&libraries=places"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqWMFEzFkRbi6w5hGgLVN3wEAwZsTURlM&callback=initMap&libraries=&v=weekly" ></script>
+
+</head>
+<body>
+  <header>
+    <div>
+      <a href="{% url 'staff:home' %}">Home</a>
+      <a href="{% url 'staff:getIncident' %}">Incidents</a>
+      <a href="{% url 'staff:report' %}">Report</a>
+      <a href="{% url 'staff:staff_logout' %}">LogOut</a>
+    </div>
+    <div>
+      {% load static %}
+      <img src="{% static 'icons/logo.png' %}" alt="Logo" height="50">
+    </div>
+  </header>
+  <div id="map-container"></div>
+
+  <script>
+    function initMap() {
+      var map = new google.maps.Map(document.getElementById('map-container'), {
+          center: {lat: 53.3498, lng: -6.2603},
+          zoom: 10
+      });
+      var icons = {
+        'Flood': '{% static "icons/flood.png" %}',
+        'Storm': '{% static "icons/storm.png" %}',
+        'Fire': '{% static "icons/fire.png" %}',
+        'Landslide': '{% static "icons/landslide.png" %}',
+        'Industrial Accident': '{% static "icons/i_a.png" %}',
+        'Transportation Accident': '{% static "icons/t_a.png" %}',
+        'Electrical Incident': '{% static "icons/e_i.png" %}'
+      };
+      var incidents = JSON.parse('{{ incidents_json|safe }}');
+      incidents.forEach(function(incident) {
+        var iconUrl = icons[incident.incident_type] || 'DEFAULT_ICON_URL';
+        var marker = new google.maps.Marker({
+          position: {lat: parseFloat(incident.lat_location), lng: parseFloat(incident.long_location)},
+          map: map,
+          title: incident.incident_type,
+          icon: {
+          url: iconUrl,
+          scaledSize: new google.maps.Size(30, 30)
+                }
+        });
+      });
+    }
+    google.maps.event.addDomListener(window, 'load', initMap);
+  </script>
+
+  </div>
+  <div id="most-recent-incident">
+    <script>
+      function initMap() {
+        // Placeholder function needed for the Google Maps API callback
+      }
+      
+      document.addEventListener("DOMContentLoaded", function() {
+        var geocoder = new google.maps.Geocoder();
+        var locations = document.querySelectorAll('.city-name');
+      
+        locations.forEach(function(location) {
+          var lat = location.getAttribute('data-lat');
+          var lng = location.getAttribute('data-lng');
+          var latlng = {lat: parseFloat(lat), lng: parseFloat(lng)};
+      
+          geocoder.geocode({'location': latlng}, function(results, status) {
+            if (status === 'OK') {
+              if (results[0]) {
+                var city = "";
+                for (var i = 0; i < results[0].address_components.length; i++) {
+                  var component = results[0].address_components[i];
+                  if (component.types.includes("locality") || component.types.includes("administrative_area_level_2")) {
+                    city = component.long_name;
+                    break;
+                  }
+                }
+                location.innerHTML = city;
+              } else {
+                location.innerHTML = 'No city found';
+              }
+            } else {
+              location.innerHTML = 'Geocoder failed';
+            }
+          });
+        });
+      });
+      </script>
+    <h2>Most Recent Incident</h2>
+    {% if recent_incidents %}
+  <table>
+    <thead>
+      <tr>
+        <th>Location</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for incident in recent_incidents %}
+        <tr>
+          <td data-lat="{{ incident.lat_location }}" data-lng="{{ incident.long_location }}" class="city-name">Error</td>
+          <td>{{ incident.incident_type }}</td>
+          <td>{{ incident.description }}</td>
+          <td>{{ incident.occur_time }}</td>
+          <td>{{ incident.status }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No incident available.</p>
+{% endif %}
+  </div>
+  <!-- Disaster Detection Results Section -->
+   <div id="  disaster-detection-Stats">
+    <h2>Disaster Detection Results</h2>
+    {% if disaster_detections %}
+      <table>
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Sub-Location</th>
+            <th>Disaster Status</th>
+            <th>Predicted Disaster Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for detection in disaster_detections %}
+            <tr>
+              <td>{{ detection.location }}</td>
+              <td>{{ detection.sub_location }}</td>
+              <td>{{ detection.disaster_status }}</td>
+              <td>{{ detection.predicted_disaster_status }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No disaster detection data available.</p>
+    {% endif %}
+  </div>
+  <footer>
+    &copy; 2024
+  </footer>
+</body>
+</html>

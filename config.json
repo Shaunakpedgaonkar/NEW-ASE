@@ -1,0 +1,65 @@
+{
+    "city_coordinates": {
+        "Dublin": {
+            "thresholds": {
+                "hurricane_threshold": 75,
+                "heatwave_threshold": 18,
+                "coldwave_threshold": 0,
+                "flooding_rainfall_threshold": 30
+            },
+            "coordinates": [
+                {
+                    "name": "City Centre (O'Connell Street)",
+                    "latitude": 53.35014,
+                    "longitude": -6.260225
+                },
+                {
+                    "name": "Dublin Docklands (Grand Canal Dock)",
+                    "latitude": 53.344276,
+                    "longitude": -6.238181
+                },
+                {
+                    "name": "Phoenix Park",
+                    "latitude": 53.355504,
+                    "longitude": -6.320809
+                },
+                {
+                    "name": "Malahide",
+                    "latitude": 53.450988,
+                    "longitude": -6.154207
+                }
+            ]
+        },
+        "Galway": {
+            "thresholds": {
+                "hurricane_threshold": 70,
+                "heatwave_threshold": 18,
+                "coldwave_threshold": 0,
+                "flooding_rainfall_threshold": 40
+            },
+            "coordinates": [
+                {
+                    "name": "City Centre (Eyre Square)",
+                    "latitude": 53.274605,
+                    "longitude": -9.048748
+                },
+                {
+                    "name": "Salthill Promenade",
+                    "latitude": 53.264955,
+                    "longitude": -9.072611
+                },
+                {
+                    "name": "University Campus (NUIG)",
+                    "latitude": 53.278568,
+                    "longitude": -9.060691
+                },
+                {
+                    "name": "Claddagh",
+                    "latitude": 53.267311,
+                    "longitude": -9.061594
+                }
+            ]
+        }
+    },
+    "number_of_days": 7
+}

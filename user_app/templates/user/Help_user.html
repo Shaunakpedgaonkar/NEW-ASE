@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help Page</title>
+  <style>
+    /* Style definitions inherited from Home_User.html */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #3f51b5;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+    }
+    header a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 18px;
+    }
+    .content {
+      padding: 20px;
+    }
+    h1 {
+      color: #3f51b5;
+    }
+    footer {
+      background-color: #3f51b5;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+    /* Additional style for the help content */
+    .help-section {
+      margin-bottom: 20px;
+    }
+    .help-section h2 {
+      color: #3f51b5;
+    }
+    .help-section p {
+      color: #666;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <a href="{% url 'user:home_user' %}">Home</a>
+      <a href="{% url 'user:getIncidentUser' %}">Incidents</a>
+      <a href="{% url 'user:report_user' %}">Report</a>
+      <a href="{% url 'user:resources_user' %}">Resources</a>
+      <a href="{% url 'user:help_user' %}">Help</a> <!-- Make sure to update the URL pattern if necessary -->
+    </div>
+    <div>
+      {% load static %}
+      <img src="{% static 'icons/logo.png' %}" alt="Logo" height="50">
+    </div>
+  </header>
+
+  <div class="content">
+    <h1>Help & Support</h1>
+    <div class="help-section">
+      <h2>How to Use the Disaster Response System</h2>
+      <p>Learn how to navigate the system, report incidents, and access resources.</p>
+    </div>
+    <div class="help-section">
+      <h2>Reporting an Incident</h2>
+      <p>Detailed instructions on how to report an incident and what information to provide.</p>
+    </div>
+    <div class="help-section">
+      <h2>FAQ</h2>
+      <p>Answers to the most common questions about the system and disaster preparedness.</p>
+    </div>
+    <div class="help-section">
+      <h2>Emergency Contacts</h2>
+      <p>List of emergency contact numbers and how to reach out for immediate help.</p>
+    </div>
+  </div>
+  <!-- Insert CSV download links section -->
+<div class="help-section">
+    <h2>Download Historical Dublin Rain Data</h2>
+    <ul>
+        <li><a href="{% static 'data/Grand canal docks.csv' %}" download>Download Grand Canal Docks CSV</a></li>
+        <li><a href="{% static 'data/malahide.csv' %}" download>Download Malahide CSV</a></li>
+        <li><a href="{% static 'data/phoenix park.csv' %}" download>Download Phoenix Park CSV</a></li>
+        <li><a href="{% static 'data/Trinity college dublin.csv' %}" download>Download Trinity College Dublin CSV</a></li>
+    </ul>
+</div>
+</div>
+
+  <footer>
+    &copy; 2024 Disaster Response System
+  </footer>
+
+</body>
+</html>
